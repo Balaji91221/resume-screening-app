@@ -1,62 +1,60 @@
 # Resume Screening App
 
-This is a web application designed to automate the process of screening resumes using Natural Language Processing (NLP) techniques. The app predicts the category of a resume based on its content, allowing recruiters to quickly filter through large numbers of resumes.
+**Explore resume-category classification with a small Streamlit application.**
 
+The app shows how text cleaning, TF-IDF features, and a saved classifier can turn a resume into a predicted job category. It is a learning project for NLP application development and a starting point for reviewing classification behavior.
 
+## What it does
 
-## Features
+- Accepts an uploaded file and decodes its contents as text.
+- Removes URLs, mentions, punctuation, and selected non-ASCII characters.
+- Applies a saved TF-IDF vectorizer and classifier.
+- Maps prediction IDs to 25 job-category labels.
+- Provides an optional word-cloud view of the cleaned text.
 
-- Upload a resume in .txt or .pdf format.
-- Predict the category of the job role based on the resume content.
-- Display a word cloud visualization of the most frequent words in the resume.
-.
-- Easily customizable and deployable.
+## Architecture
 
-## Installation
-
-1. Clone the repository:
-
-```
-git clone https:/githubcomyour_usernameresume-screening-app.git
-```
-
-2. Install the required Python packages:
-
-```
-pip install -r requirements.txt
+```mermaid
+flowchart LR
+  Upload[Resume file] --> Decode[Text decoding and cleaning]
+  Decode --> TFIDF[model/tfidf.pkl]
+  TFIDF --> Classifier[model/clf.pkl]
+  Classifier --> Category[Predicted job category]
+  Decode --> Cloud[Optional word cloud]
 ```
 
+## Run locally
 
+Download and extract the repository, then open a terminal in its root directory.
 
-## Usage
-
-1. Navigate to the project directory:
-
-
-```
-cd resume-screening-app
-```
-
-
-
-2. Run the Streamlit app:
-```
-streamlit run app.py
+```bash
+python -m pip install -r requirements.txt
+python -m pip install scikit-learn
+python -m streamlit run app.py
 ```
 
+The dependency file contains older pinned packages; choose a compatible Python environment. The saved classifier and vectorizer also require a compatible scikit-learn version, which is not pinned in the repository. NLTK downloads `punkt` and `stopwords` when the app starts.
 
-3. Upload a resume using the file uploader in the sidebar.
-4. View the prediction result, word cloud, and model accuracy plot.
+## Example
 
-## Dataset
+Upload a UTF-8 `.txt` resume describing your own sample experience. The app displays a category such as **Python Developer** or **Data Science**, depending on the trained classifier. A category prediction is not a candidate score or a measure of suitability for a particular job.
 
-The model is trained on a dataset of labeled resumes, where each resume is associated with a job category. The dataset used for training can be found in the `data` directory.
+## Repository guide
 
-## Model Training
+| Path | Purpose |
+|---|---|
+| [app.py](app.py) | Streamlit UI, cleaning, inference, and label mapping |
+| [Untitled.ipynb](Untitled.ipynb) | Model-development notebook |
+| `model/` | Serialized classifier and TF-IDF vectorizer |
+| `dataset/UpdatedResumeDataSet.csv` | Included resume dataset |
+| [requirements.txt](requirements.txt) | App dependency pins |
 
-The machine learning models used for prediction are trained using the `train_model.py` script. The trained models are saved in the `model` directory.
+## Current limitations
+
+The uploader accepts `.pdf`, but the code decodes file bytes rather than extracting PDF text. Use `.txt` for the implemented text flow. The optional word-cloud path calls `calculate_accuracy()`, which is not defined in `app.py`; that branch needs repair before use. There is no `train_model.py` in this repository.
+
+Inspect classification errors and dataset coverage before adapting the project for a hiring workflow. Load pickle artifacts only from trusted sources.
 
 ## Contributing
 
-Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or create a pull request.
-
+Useful contributions include a real PDF extraction path, a reproducible training environment, and a working evaluation view. Include a small non-sensitive example that reproduces the behavior being changed.
